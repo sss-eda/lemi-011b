@@ -2,19 +2,21 @@ package main
 
 import (
 	"log"
+	"sync"
 
+	"github.com/google/uuid"
 	"github.com/sss-eda/lemi-011b/internal/lemi011b"
 	"github.com/sss-eda/lemi-011b/internal/local"
 	"github.com/sss-eda/lemi-011b/internal/physical"
-	"github.com/sss-eda/lemi-011b/vendor/github.com/google/uuid"
 	"github.com/tarm/serial"
 )
 
 func main() {
-	id1, err := uuid.NewUUID()
+	uuid1, err := uuid.NewUUID()
 	if err != nil {
 		log.Fatal("failed to generate ID for device1")
 	}
+	id1 := lemi011b.DeviceID(uuid1)
 	port1, err := serial.OpenPort(
 		&serial.Config{
 			Name: "/dev/ttyUSB0",
@@ -43,5 +45,12 @@ func main() {
 		log.Fatalf("unable to create repository: %v", err)
 	}
 
-	log.Fatal(local.Log(service))
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go func(id lemi011b.DeviceID, wg *sync.WaitGroup) {
+		log.Fatal(service.AcquireData(id))
+	}(id1, &wg)
+
+	wg.Wait()
 }
