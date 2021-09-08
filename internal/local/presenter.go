@@ -4,23 +4,18 @@ import (
 	"github.com/sss-eda/lemi-011b/internal/lemi011b"
 )
 
-// Presenter TODO
-type Presenter struct{}
+// DatumPresenter TODO
+type DatumPresenter struct{}
 
-// NewPresenter TODO
-func NewPresenter() (*Presenter, error) {
-	return &Presenter{}, nil
+// NewDatumPresenter TODO
+func NewDatumPresenter() (*DatumPresenter, error) {
+	return &DatumPresenter{}, nil
 }
 
 // Present TODO
-func (pres *Presenter) Present(
+func (pres *DatumPresenter) Present(
 	datum *lemi011b.Datum,
 ) error {
 	// Save to file
-	return nil
-}
-
-// Log TODO
-func Log(service lemi011b.Service) error {
 	return nil
 }

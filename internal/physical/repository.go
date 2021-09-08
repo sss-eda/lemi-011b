@@ -13,10 +13,16 @@ type DeviceRepository struct {
 
 // NewDeviceRepository TODO
 func NewDeviceRepository(
-	devices ...*Device,
+	devices ...*lemi011b.Device,
 ) (*DeviceRepository, error) {
 	repo := DeviceRepository{
 		devices: map[lemi011b.DeviceID]*Device{},
+	}
+
+	for _, device := range devices {
+		repo.devices[lemi011b.DeviceID(device.ID)] = &Device{
+			Reader: device.Reader,
+		}
 	}
 
 	return &repo, nil
