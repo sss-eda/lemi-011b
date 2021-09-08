@@ -39,17 +39,11 @@ func (repo *DeviceRepository) Load(
 
 // Save TODO
 func (repo *DeviceRepository) Save(
-	device *lemi011b.DeviceID,
+	device *lemi011b.Device,
 ) (lemi011b.DeviceID, error) {
 	repo.devices[device.ID] = &Device{
 		Reader: device.Reader,
 	}
-	if !ok {
-		return nil, fmt.Errorf("device with id: %v does not exist", id)
-	}
 
-	return &lemi011b.Device{
-		ID:     id,
-		Reader: device.Reader,
-	}, nil
+	return device.ID, nil
 }
