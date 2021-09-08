@@ -1,8 +1,10 @@
 package physical
 
-import "io"
+import (
+	"io"
+)
 
 // Device TODO
 type Device struct {
-	r io.Reader
+	Reader io.Reader
 }

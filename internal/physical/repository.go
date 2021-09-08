@@ -1,7 +1,9 @@
 package physical
 
 import (
-	"github.com/sss-eda/lemi011b"
+	"fmt"
+
+	"github.com/sss-eda/lemi-011b/internal/lemi011b"
 )
 
 // DeviceRepository TODO
@@ -11,7 +13,7 @@ type DeviceRepository struct {
 
 // NewDeviceRepository TODO
 func NewDeviceRepository(
-	devices ...*lemi011b.Device,
+	devices ...*Device,
 ) (*DeviceRepository, error) {
 	repo := DeviceRepository{
 		devices: map[lemi011b.DeviceID]*Device{},
@@ -24,8 +26,30 @@ func NewDeviceRepository(
 func (repo *DeviceRepository) Load(
 	id lemi011b.DeviceID,
 ) (*lemi011b.Device, error) {
-	device, ok := repo.Load(id)
+	device, ok := repo.devices[id]
 	if !ok {
-
+		return nil, fmt.Errorf("device with id: %v does not exist", id)
 	}
+
+	return &lemi011b.Device{
+		ID:     id,
+		Reader: device.Reader,
+	}, nil
+}
+
+// Save TODO
+func (repo *DeviceRepository) Save(
+	device *lemi011b.DeviceID,
+) (lemi011b.DeviceID, error) {
+	repo.devices[device.ID] = &Device{
+		Reader: device.Reader,
+	}
+	if !ok {
+		return nil, fmt.Errorf("device with id: %v does not exist", id)
+	}
+
+	return &lemi011b.Device{
+		ID:     id,
+		Reader: device.Reader,
+	}, nil
 }

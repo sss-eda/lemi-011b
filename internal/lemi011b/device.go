@@ -1,6 +1,8 @@
 package lemi011b
 
 import (
+	"io"
+
 	"github.com/google/uuid"
 )
 
@@ -9,10 +11,6 @@ type DeviceID uuid.UUID
 
 // Device TODO
 type Device struct {
-	ID DeviceID
-}
-
-// DatumAcquired TODO
-func DatumAcquired() {
-
+	ID     DeviceID
+	Reader io.Reader
 }
