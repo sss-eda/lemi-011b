@@ -1,56 +1,48 @@
 package main
 
 import (
+	"context"
 	"log"
-	"sync"
+	"net/http"
+	"os"
 
-	"github.com/google/uuid"
-	"github.com/sss-eda/lemi-011b/internal/lemi011b"
-	"github.com/sss-eda/lemi-011b/internal/local"
-	"github.com/sss-eda/lemi-011b/internal/physical"
-	"github.com/tarm/serial"
+	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
+	"github.com/sss-eda/lemi-011b/pkg/infrastructure/rest"
+	"github.com/sss-eda/lemi-011b/pkg/infrastructure/timescaledb"
 )
 
 func main() {
-	uuid1, err := uuid.NewUUID()
+	ctx := context.Background()
+
+	timescaledbURL := os.Getenv("LEMI011B_SERVER_TIMESCALEDB_URL")
+	if timescaledbURL == "" {
+		log.Fatal("no env variable defined for timescaledb url")
+	}
+	restPort := os.Getenv("LEMI011B_SERVER_REST_PORT")
+	if restPort == "" {
+		log.Fatal("no env variabel defined for rest port")
+	}
+
+	dbpool, err := pgxpool.Connect(ctx, timescaledbURL)
 	if err != nil {
-		log.Fatal("failed to generate ID for device1")
+		log.Fatal(err)
 	}
-	id1 := lemi011b.DeviceID(uuid1)
-	port1, err := serial.OpenPort(
-		&serial.Config{
-			Name: "/dev/ttyUSB0",
-			Baud: 115200,
-		},
-	)
+
+	repo, err := timescaledb.NewRepository(ctx, dbpool)
 	if err != nil {
-		log.Fatalf("unable to open serial port: %v", err)
-	}
-	defer port1.Close()
-
-	device1 := &lemi011b.Device{
-		ID:     lemi011b.DeviceID(id1),
-		Reader: port1,
+		log.Fatal(err)
 	}
 
-	repository, err := physical.NewDeviceRepository(device1)
+	acquirer, err := acquisition.NewService(repo)
 	if err != nil {
-		log.Fatalf("unable to create repository: %v", err)
+		log.Fatal(err)
 	}
 
-	presenter, err := local.NewDatumPresenter()
-
-	service, err := lemi011b.NewService(repository, presenter)
+	server, err := rest.NewServer(acquirer)
 	if err != nil {
-		log.Fatalf("unable to create repository: %v", err)
+		log.Fatal(err)
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func(id lemi011b.DeviceID, wg *sync.WaitGroup) {
-		log.Fatal(service.AcquireData(id))
-	}(id1, &wg)
-
-	wg.Wait()
+	log.Fatal(http.ListenAndServe(":"+restPort, server))
 }
