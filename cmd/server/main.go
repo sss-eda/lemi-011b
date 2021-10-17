@@ -21,7 +21,7 @@ func main() {
 	}
 	restPort := os.Getenv("LEMI011B_SERVER_REST_PORT")
 	if restPort == "" {
-		log.Fatal("no env variabel defined for rest port")
+		log.Fatal("no env variable defined for rest port")
 	}
 
 	dbpool, err := pgxpool.Connect(ctx, timescaledbURL)
