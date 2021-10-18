@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/sss-eda/lemi-011b)](https://goreportcard.com/report/github.com/sss-eda/lemi-011b)
+
 # LEMI-011B
 This repository contains acquisition software for the LEMI-011B magnetometer.
 
@@ -31,14 +33,6 @@ $ docker run -d -p 8080:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://post
 # Run the client and mount the serial port into the container.
 $ docker run --privileged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
-
-=======
-[![Go Report Card](https://goreportcard.com/badge/github.com/sss-eda/lemi-011b)](https://goreportcard.com/report/github.com/sss-eda/lemi-011b)
-
-# lemi-011b
-Acquisition software for the LEMI-011B magnetometer.
-
-
 
 ## TODO
 - [ ] Implement tests for all packages
