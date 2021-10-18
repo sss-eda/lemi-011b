@@ -2,9 +2,7 @@ package rest
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -30,51 +28,26 @@ func (client *Client) AcquireDatum(
 	ctx context.Context,
 	datum acquisition.Datum,
 ) error {
-	request, err := http.NewRequest("POST", client.url, nil)
+	req, err := http.NewRequest("POST", client.url+"/datum", nil)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
-	request = request.WithContext(ctx)
 
-	var response struct{}
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Content-Type", "application/json")
 
-	err = client.sendRequest(request, &response)
+	resp, err := client.api.Do(req)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
+	defer resp.Body.Close()
 
-	log.Println(response)
-
-	return nil
-}
-
-func (client *Client) sendRequest(req *http.Request, v interface{}) error {
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Accept", "application/json; charset=utf-8")
-	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", client.apiKey))
-
-	res, err := client.api.Do(req)
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
 
-	defer res.Body.Close()
-
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		var errRes errorResponse
-		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.Message)
-		}
-
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
-	}
-
-	fullResponse := successResponse{
-		Data: v,
-	}
-	if err = json.NewDecoder(res.Body).Decode(&fullResponse); err != nil {
-		return err
-	}
+	log.Println(bodyBytes)
 
 	return nil
 }
