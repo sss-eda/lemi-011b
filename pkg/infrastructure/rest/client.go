@@ -32,7 +32,10 @@ func (client *Client) AcquireDatum(
 	r, w := io.Pipe()
 	enc := json.NewEncoder(w)
 
-	enc.Encode(datum)
+	err := enc.Encode(datum)
+	if err != nil {
+		log.Println(err)
+	}
 
 	req, err := http.NewRequest("POST", client.url+"/datum", r)
 	if err != nil {
@@ -47,6 +50,8 @@ func (client *Client) AcquireDatum(
 		log.Println(err)
 	}
 	defer resp.Body.Close()
+
+	log.Println(resp)
 
 	// _, err := ioutil.ReadAll(resp.Body)
 	// if err != nil {
