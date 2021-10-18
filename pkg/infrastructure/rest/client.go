@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
@@ -35,12 +36,14 @@ func (client *Client) AcquireDatum(
 	}
 	request = request.WithContext(ctx)
 
-	response := acquisition.Datum{}
+	var response string
 
 	err = client.sendRequest(request, &response)
 	if err != nil {
 		return err
 	}
+
+	log.Println(response)
 
 	return nil
 }

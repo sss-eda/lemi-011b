@@ -29,7 +29,7 @@ $ docker run -d -p 8080:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://post
 - To run a **client** container:
 ```bash
 # Run the client and mount the serial port into the container.
-$ docker run --priveleged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
+$ docker run --privileged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
 
 
