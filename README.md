@@ -32,8 +32,8 @@ $ docker run -d -p 8080:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://post
 $ docker run --privileged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
 
+=======
+[![Go Report Card](https://goreportcard.com/badge/github.com/sss-eda/lemi-011b)](https://goreportcard.com/report/github.com/sss-eda/lemi-011b)
 
-## TODO
-- [ ] Implement tests for all packages
-- [ ] Fix problem with new devices
-- [ ] Add device ID functionality
+# lemi-011b
+Acquisition software for the LEMI-011B magnetometer.
