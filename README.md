@@ -37,3 +37,10 @@ $ docker run --privileged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:808
 
 # lemi-011b
 Acquisition software for the LEMI-011B magnetometer.
+
+
+
+## TODO
+- [ ] Implement tests for all packages
+- [ ] Fix problem with new devices
+- [ ] Add device ID functionality
