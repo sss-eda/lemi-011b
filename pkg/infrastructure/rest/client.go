@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 
@@ -29,15 +29,16 @@ func (client *Client) AcquireDatum(
 	ctx context.Context,
 	datum acquisition.Datum,
 ) error {
-	reader, writer := io.Pipe()
-	enc := json.NewEncoder(writer)
-
-	err := enc.Encode(datum)
+	jsonData, err := json.Marshal(datum)
 	if err != nil {
 		log.Println(err)
 	}
 
-	resp, err := client.api.Post(client.url+"/datum", "application/json", reader)
+	resp, err := client.api.Post(
+		client.url+"/datum",
+		"application/json",
+		bytes.NewBuffer(jsonData),
+	)
 	if err != nil {
 		log.Println(err)
 	}
