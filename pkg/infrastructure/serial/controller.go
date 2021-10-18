@@ -3,6 +3,7 @@ package serial
 import (
 	"bufio"
 	"context"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -37,8 +38,12 @@ func (ctrl *Controller) Run(
 
 	for scanner.Scan() {
 		line := scanner.Text()
+		log.Println(line)
 
 		fields := strings.Split(line, ", ")
+		if len(fields) < 4 {
+			continue
+		}
 		timestamp := time.Now()
 		x, err := strconv.ParseInt(fields[0], 10, 32)
 		if err != nil {

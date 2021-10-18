@@ -19,18 +19,21 @@ $ docker build -t lemi011b-client:latest -f build/docker/client/Dockerfile .
 ### Run
 Example instructions for running the Docker containers are show below:
 
-- To run a **server** container:
+- To run a **server** container with dependencies:
 ```bash
-$ docker run -p 8081:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://postgres:password@192.168.0.1:5432/lemi011b" lemi011b-server
+# Start a timescaledb instance.
+$ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg12
+# Run the server
+$ docker run -d -p 8080:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://postgres:password@192.168.0.1:5432/lemi011b" lemi011b-server
 ```
 - To run a **client** container:
 ```bash
-$ docker run -p 8080:8080 -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
+# Run the client and mount the serial port into the container.
+$ docker run --priveleged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
 
 
 ## TODO
 - [ ] Implement tests for all packages
-
-## ISSUES
-- [ ] Device management part - if device isn't registered, data won't be saved for it.
+- [ ] Fix problem with new devices
+- [ ] Add device ID functionality
