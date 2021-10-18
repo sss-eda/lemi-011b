@@ -38,7 +38,6 @@ func (ctrl *Controller) Run(
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		log.Println(line)
 
 		fields := strings.Split(line, ", ")
 		if len(fields) < 4 {
@@ -62,14 +61,22 @@ func (ctrl *Controller) Run(
 			return err
 		}
 
-		ctrl.service.AcquireDatum(ctx, acquisition.Datum{
+		datum := acquisition.Datum{
 			Time:     timestamp,
 			SensorID: ctrl.sensorID,
 			X:        int32(x),
 			Y:        int32(y),
 			Z:        int32(z),
 			T:        int16(t),
-		})
+		}
+
+		log.Println(datum)
+
+		err = ctrl.service.AcquireDatum(ctx, datum)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	}
 
 	return nil
