@@ -29,23 +29,15 @@ func (client *Client) AcquireDatum(
 	ctx context.Context,
 	datum acquisition.Datum,
 ) error {
-	r, w := io.Pipe()
-	enc := json.NewEncoder(w)
+	reader, writer := io.Pipe()
+	enc := json.NewEncoder(writer)
 
-	req, err := http.NewRequest("POST", client.url+"/datum", r)
+	err := enc.Encode(datum)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = enc.Encode(datum)
-	if err != nil {
-		log.Println(err)
-	}
-
-	req.Header.Add("Accept", "application/json")
-	req.Header.Add("Content-Type", "application/json")
-
-	resp, err := client.api.Do(req.WithContext(ctx))
+	resp, err := client.api.Post(client.url+"/datum", "application/json", reader)
 	if err != nil {
 		log.Println(err)
 	}
