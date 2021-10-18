@@ -2,7 +2,8 @@ package rest
 
 import (
 	"context"
-	"io/ioutil"
+	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 
@@ -28,7 +29,12 @@ func (client *Client) AcquireDatum(
 	ctx context.Context,
 	datum acquisition.Datum,
 ) error {
-	req, err := http.NewRequest("POST", client.url+"/datum", nil)
+	r, w := io.Pipe()
+	enc := json.NewEncoder(w)
+
+	enc.Encode(datum)
+
+	req, err := http.NewRequest("POST", client.url+"/datum", r)
 	if err != nil {
 		log.Println(err)
 	}
@@ -42,12 +48,10 @@ func (client *Client) AcquireDatum(
 	}
 	defer resp.Body.Close()
 
-	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Println(err)
-	}
-
-	log.Println(bodyBytes)
+	// _, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 
 	return nil
 }
