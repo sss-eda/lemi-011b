@@ -32,12 +32,12 @@ func (client *Client) AcquireDatum(
 	r, w := io.Pipe()
 	enc := json.NewEncoder(w)
 
-	err := enc.Encode(datum)
+	req, err := http.NewRequest("POST", client.url+"/datum", r)
 	if err != nil {
 		log.Println(err)
 	}
 
-	req, err := http.NewRequest("POST", client.url+"/datum", r)
+	err = enc.Encode(datum)
 	if err != nil {
 		log.Println(err)
 	}
@@ -45,7 +45,7 @@ func (client *Client) AcquireDatum(
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
-	resp, err := client.api.Do(req)
+	resp, err := client.api.Do(req.WithContext(ctx))
 	if err != nil {
 		log.Println(err)
 	}
