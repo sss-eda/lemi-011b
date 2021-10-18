@@ -20,7 +20,7 @@ func main() {
 	if restURL == "" {
 		log.Fatal("No environment variable for rest url")
 	}
-	serialName := os.Getenv("LEMI011B_CLIENT_SERIAL_NAME")
+	serialName := os.Getenv("LEMI011B_CLIENT_SERIAL_PORT")
 	if serialName == "" {
 		log.Fatal("No environment variable for serial port name")
 	}
