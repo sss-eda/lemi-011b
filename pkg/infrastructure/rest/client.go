@@ -1,10 +1,10 @@
 package rest
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
@@ -29,49 +29,27 @@ func (client *Client) AcquireDatum(
 	ctx context.Context,
 	datum acquisition.Datum,
 ) error {
-	request, err := http.NewRequest("POST", client.url, nil)
+	jsonData, err := json.Marshal(datum)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
-	request = request.WithContext(ctx)
 
-	response := acquisition.Datum{}
-
-	err = client.sendRequest(request, &response)
+	resp, err := client.api.Post(
+		client.url+"/datum",
+		"application/json",
+		bytes.NewBuffer(jsonData),
+	)
 	if err != nil {
-		return err
+		log.Println(err)
 	}
+	defer resp.Body.Close()
 
-	return nil
-}
+	log.Println(resp)
 
-func (client *Client) sendRequest(req *http.Request, v interface{}) error {
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Accept", "application/json; charset=utf-8")
-	// req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", client.apiKey))
-
-	res, err := client.api.Do(req)
-	if err != nil {
-		return err
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode < http.StatusOK || res.StatusCode >= http.StatusBadRequest {
-		var errRes errorResponse
-		if err = json.NewDecoder(res.Body).Decode(&errRes); err == nil {
-			return errors.New(errRes.Message)
-		}
-
-		return fmt.Errorf("unknown error, status code: %d", res.StatusCode)
-	}
-
-	fullResponse := successResponse{
-		Data: v,
-	}
-	if err = json.NewDecoder(res.Body).Decode(&fullResponse); err != nil {
-		return err
-	}
+	// _, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 
 	return nil
 }

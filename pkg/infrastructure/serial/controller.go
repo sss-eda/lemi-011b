@@ -3,6 +3,7 @@ package serial
 import (
 	"bufio"
 	"context"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -39,6 +40,9 @@ func (ctrl *Controller) Run(
 		line := scanner.Text()
 
 		fields := strings.Split(line, ", ")
+		if len(fields) < 4 {
+			continue
+		}
 		timestamp := time.Now()
 		x, err := strconv.ParseInt(fields[0], 10, 32)
 		if err != nil {
@@ -57,14 +61,22 @@ func (ctrl *Controller) Run(
 			return err
 		}
 
-		ctrl.service.AcquireDatum(ctx, acquisition.Datum{
+		datum := acquisition.Datum{
 			Time:     timestamp,
 			SensorID: ctrl.sensorID,
 			X:        int32(x),
 			Y:        int32(y),
 			Z:        int32(z),
 			T:        int16(t),
-		})
+		}
+
+		log.Println(datum)
+
+		err = ctrl.service.AcquireDatum(ctx, datum)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
 	}
 
 	return nil
