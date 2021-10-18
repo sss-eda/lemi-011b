@@ -36,7 +36,7 @@ func (client *Client) AcquireDatum(
 	}
 	request = request.WithContext(ctx)
 
-	var response string
+	var response struct{}
 
 	err = client.sendRequest(request, &response)
 	if err != nil {
