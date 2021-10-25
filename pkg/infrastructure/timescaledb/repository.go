@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
+	"github.com/sss-eda/lemi-011b/pkg/domain/registration"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -57,6 +58,22 @@ func (repo *Repository) AcquireDatum(
 		INSERT INTO datum (time, sensor_id, x, y, z, t)
 		VALUES ($1, $2, $3, $4, $5, $6);
 	`, datum.Time, datum.SensorID, datum.X, datum.Y, datum.Z, datum.T)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// RegisterSensor TODO
+func (repo *Repository) RegisterSensor(
+	ctx context.Context,
+	sensor registration.Sensor,
+) error {
+	_, err := repo.pool.Exec(ctx, `
+		INSERT INTO sensor (id)
+		VALUES ($1);
+	`, sensor.ID)
 	if err != nil {
 		return err
 	}

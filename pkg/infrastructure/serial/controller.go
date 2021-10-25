@@ -14,13 +14,13 @@ import (
 
 // Controller TODO
 type Controller struct {
-	sensorID uint64
+	sensorID acquisition.SensorID
 	service  acquisition.Service
 }
 
 // NewController TODO
 func NewController(
-	sensorID uint64,
+	sensorID acquisition.SensorID,
 	acquisitionService acquisition.Service,
 ) (*Controller, error) {
 	return &Controller{

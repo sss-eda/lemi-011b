@@ -1,10 +1,10 @@
-package acquisition
+package registration
 
 import "context"
 
 // Service TODO
 type Service interface {
-	AcquireDatum(context.Context, Datum) error
+	RegisterSensor(context.Context, Sensor) error
 }
 
 type service struct {
@@ -20,10 +20,10 @@ func NewService(
 	}, nil
 }
 
-// AcquireDatum TODO
-func (svc *service) AcquireDatum(
+// RegisterSensor TODO
+func (svc *service) RegisterSensor(
 	ctx context.Context,
-	datum Datum,
+	sensor Sensor,
 ) error {
-	return svc.repo.AcquireDatum(ctx, datum)
+	return svc.repo.RegisterSensor(ctx, sensor)
 }
