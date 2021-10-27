@@ -13,8 +13,8 @@ ENTRYPOINT ["sh"]
 
 RUN go mod tidy
 RUN go install ./cmd/client/...
-ARG opts
-RUN env CGO_ENABLED=0 GOARCH=${ARCH} go build -o /go/bin/import ./cmd/client/...
+ARG GOOPTS
+RUN env ${GOOPTS} go build -o /go/bin/import ./cmd/client/...
 
 
 FROM scratch
