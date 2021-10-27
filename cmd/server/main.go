@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
-	"github.com/sss-eda/lemi-011b/pkg/infrastructure/rest"
-	"github.com/sss-eda/lemi-011b/pkg/infrastructure/timescaledb"
+	"github.com/sss-eda/lemi-011b/pkg/adapter/rest"
+	"github.com/sss-eda/lemi-011b/pkg/adapter/timescaledb"
+	"github.com/sss-eda/lemi-011b/pkg/core"
 )
 
 func main() {
@@ -34,12 +34,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	acquirer, err := acquisition.NewService(repo)
+	acquirer, err := core.NewAcquisitionService(repo)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	server, err := rest.NewServer(acquirer)
+	registry, err := core.NewRegistrationService(repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	server, err := rest.NewServer(acquirer, registry)
 	if err != nil {
 		log.Fatal(err)
 	}
