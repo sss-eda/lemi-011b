@@ -1,0 +1,39 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build the Docker image - AMD64
+      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=amd64" --tag stephanus42/lemi011b:amd64 --file build/docker/Dockerfile .
+    - name: Push the Docker image - AMD64
+      run: docker push stephanus42/lemi011b:amd64
+      
+    - name: Build the Docker image - ARM64V7
+      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=arm64 GOARM=7" --tag stephanus42/lemi011b:arm64v7 --file build/docker/Dockerfile .
+    - name: Push the Docker image - ARM64V7
+      run: docker push stephanus42/lemi011b:arm64v7
+      
+    - name: Build the Docker image - ARM64V8
+      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=arm64 GOARM=8" --tag stephanus42/lemi011b:arm64v8 --file build/docker/Dockerfile .
+    - name: Build the Docker image - ARM64V8
+      run: docker push stephanus42/lemi011b:arm64v8
+      
+    - name: Create Docker manifest
+      run: docker manifest create stephanus42/lemi011b:latest \
+            --amend stephanus42/lemi011b:amd64 \
+            --amend stephanus42/lemi011b:arm64v7 \
+            --amend stephanus42/lemi011b:arm64v8
+    - name: Push Docker manifest
+      run: docker manifest push stephanus42/lemi011b:latest
