@@ -33,7 +33,7 @@ jobs:
       
     - name: Build the Docker image - ARM64
       run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=arm64" --tag stephanus42/lemi011b:arm64 --file build/docker/Dockerfile .
-    - name: Build the Docker image - ARM64
+    - name: Push the Docker image - ARM64
       run: docker push stephanus42/lemi011b:arm64
       
     - name: Create Docker manifest
