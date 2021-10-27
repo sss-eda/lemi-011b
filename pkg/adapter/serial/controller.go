@@ -40,25 +40,29 @@ func (ctrl *Controller) Run(
 		line := scanner.Text()
 
 		fields := strings.Split(line, ", ")
-		if len(fields) < 4 {
+		if len(fields) != 4 {
 			continue
 		}
 		timestamp := time.Now()
 		x, err := strconv.ParseInt(fields[0], 10, 32)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
 		y, err := strconv.ParseInt(fields[1], 10, 32)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
 		z, err := strconv.ParseInt(fields[2], 10, 32)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
 		t, err := strconv.ParseInt(fields[3], 10, 16)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
 
 		datum := acquisition.Datum{
@@ -70,8 +74,6 @@ func (ctrl *Controller) Run(
 			T:        int16(t),
 		}
 
-		log.Println(datum)
-
 		err = ctrl.service.AcquireDatum(ctx, datum)
 		if err != nil {
 			log.Println(err)
@@ -79,5 +81,5 @@ func (ctrl *Controller) Run(
 		}
 	}
 
-	return nil
+	return scanner.Err()
 }

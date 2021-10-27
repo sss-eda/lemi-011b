@@ -6,9 +6,10 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/sss-eda/lemi-011b/pkg/adapter/rest"
+	"github.com/sss-eda/lemi-011b/pkg/adapter/serial"
+	"github.com/sss-eda/lemi-011b/pkg/core"
 	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
-	"github.com/sss-eda/lemi-011b/pkg/infrastructure/rest"
-	"github.com/sss-eda/lemi-011b/pkg/infrastructure/serial"
 
 	tarm "github.com/tarm/serial"
 )
@@ -16,6 +17,14 @@ import (
 func main() {
 	ctx := context.Background()
 
+	envSensorID := os.Getenv("LEMI011B_CLIENT_SENSOR_ID")
+	if envSensorID == "" {
+		log.Fatal("No environment variable for sensor ID")
+	}
+	sensorID, err := strconv.ParseInt(envSensorID, 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
 	restURL := os.Getenv("LEMI011B_CLIENT_REST_URL")
 	if restURL == "" {
 		log.Fatal("No environment variable for rest url")
@@ -38,7 +47,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	service, err := acquisition.NewService(repo)
+	service, err := core.NewAcquisitionService(repo)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +60,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ctrl, err := serial.NewController(1, service)
+	ctrl, err := serial.NewController(acquisition.SensorID(sensorID), service)
 	if err != nil {
 		log.Fatal(err)
 	}
