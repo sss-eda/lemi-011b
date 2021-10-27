@@ -40,6 +40,6 @@ jobs:
       run: docker manifest create stephanus42/lemi011b:latest \
             --amend stephanus42/lemi011b:amd64 \
             --amend stephanus42/lemi011b:armv7 \
-            --amend stephanus42/lemi011b:arm64v8
+            --amend stephanus42/lemi011b:arm64
     - name: Push Docker manifest
       run: docker manifest push stephanus42/lemi011b:latest
