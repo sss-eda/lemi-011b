@@ -22,21 +22,27 @@ jobs:
         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
     
     - name: Build the Docker image - AMD64
-      run: docker build --build-arg ARCH="amd64" --tag stephanus42/lemi011b:amd64 --file build/docker/Dockerfile .
+      run: docker build --build-arg ARCH="amd64" --tag stephanus42/lemi011b-amd64-linux --file build/docker/Dockerfile .
     - name: Push the Docker image - AMD64
-      run: docker push stephanus42/lemi011b:amd64
+      run: docker push stephanus42/lemi011b-amd64-linux
       
-    - name: Build the Docker image - ARM
-      run: docker build --build-arg ARCH="arm" --tag stephanus42/lemi011b:arm --file build/docker/Dockerfile .
-    - name: Push the Docker image - ARM
-      run: docker push stephanus42/lemi011b:arm
+    - name: Build the Docker image - ARM32V7
+      run: docker build --build-arg ARCH="arm32v7" --tag stephanus42/lemi011b-arm32v7-linux --file build/docker/Dockerfile .
+    - name: Push the Docker image - ARM32V7
+      run: docker push stephanus42/lemi011b-arm32v7-linux
       
     - name: Build the Docker image - ARM64
-      run: docker build --build-arg ARCH="arm64" --tag stephanus42/lemi011b:arm64 --file build/docker/Dockerfile .
+      run: docker build --build-arg ARCH="arm64" --tag stephanus42/lemi011b-arm64-linux --file build/docker/Dockerfile .
     - name: Push the Docker image - ARM64
-      run: docker push stephanus42/lemi011b:arm64
+      run: docker push stephanus42/lemi011b-arm64-linux
       
     - name: Create Docker manifest
-      run: docker manifest create stephanus42/lemi011b:latest --amend stephanus42/lemi011b:amd64 --amend stephanus42/lemi011b:arm --amend stephanus42/lemi011b:arm64
+      run: docker manifest create stephanus42/lemi011b:latest stephanus42/lemi011b-amd64-linux stephanus42/lemi011b-arm32v7-linux stephanus42/lemi011b-arm64-linux
+    - name: Annotate Docker manifest AMD64
+      run: docker manifest annotate --arch amd64 stephanus42/lemi011b:latest stephanus42/lemi011b-amd64-linux
+    - name: Annotate Docker manifest ARM32V7
+      run: docker manifest annotate --arch arm32 --variant v7 stephanus42/lemi011b:latest stephanus42/lemi011b-arm32v7-linux
+    - name: Annotate Docker manifest ARM64
+      run: docker manifest annotate --arch arm64 stephanus42/lemi011b:latest stephanus42/lemi011b-arm64-linux
     - name: Push Docker manifest
       run: docker manifest push stephanus42/lemi011b:latest
