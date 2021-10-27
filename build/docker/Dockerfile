@@ -1,4 +1,5 @@
-FROM golang:alpine AS builder
+ARG ARCH=
+FROM ${ARCH}/golang AS builder
 
 WORKDIR $GOPATH/src/github.com/sss-eda/lemi011b
 
@@ -13,10 +14,10 @@ ENTRYPOINT ["sh"]
 RUN go mod tidy
 RUN go install ./cmd/client/...
 ARG opts
-RUN env ${opts} go build -o /go/bin/import ./cmd/client/...
+RUN env CGO_ENABLED=0 GOARCH=${ARCH} go build -o /go/bin/import ./cmd/client/...
 
 
-FROM scratch AS lemi011b-client
+FROM scratch
 
 ENV LEMI011B_CLIENT_SENSOR_ID=1
 ENV LEMI011B_CLIENT_REST_URL="http://localhost:8081"
