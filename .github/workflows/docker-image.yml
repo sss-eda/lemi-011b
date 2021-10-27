@@ -26,7 +26,7 @@ jobs:
     - name: Push the Docker image - AMD64
       run: docker push stephanus42/lemi011b:amd64
       
-    - name: Build the Docker image - ARMV7
+    - name: Build the Docker image - ARM
       run: docker build --build-arg ARCH="arm" --tag stephanus42/lemi011b:arm --file build/docker/Dockerfile .
     - name: Push the Docker image - ARM
       run: docker push stephanus42/lemi011b:arm
