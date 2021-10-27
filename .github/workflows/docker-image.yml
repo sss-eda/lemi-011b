@@ -22,21 +22,21 @@ jobs:
         password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
     
     - name: Build the Docker image - AMD64
-      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=amd64" --tag stephanus42/lemi011b:amd64 --file build/docker/Dockerfile .
+      run: docker build --build-arg ARCH="amd64" --tag stephanus42/lemi011b:amd64 --file build/docker/Dockerfile .
     - name: Push the Docker image - AMD64
       run: docker push stephanus42/lemi011b:amd64
       
     - name: Build the Docker image - ARMV7
-      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=arm GOARM=7" --tag stephanus42/lemi011b:armv7 --file build/docker/Dockerfile .
-    - name: Push the Docker image - ARMV7
-      run: docker push stephanus42/lemi011b:armv7
+      run: docker build --build-arg ARCH="arm" --tag stephanus42/lemi011b:arm --file build/docker/Dockerfile .
+    - name: Push the Docker image - ARM
+      run: docker push stephanus42/lemi011b:arm
       
     - name: Build the Docker image - ARM64
-      run: docker build --build-arg opts="CGO_ENABLED=0 GOARCH=arm64" --tag stephanus42/lemi011b:arm64 --file build/docker/Dockerfile .
+      run: docker build --build-arg ARCH="arm64" --tag stephanus42/lemi011b:arm64 --file build/docker/Dockerfile .
     - name: Push the Docker image - ARM64
       run: docker push stephanus42/lemi011b:arm64
       
     - name: Create Docker manifest
-      run: docker manifest create stephanus42/lemi011b:latest --amend stephanus42/lemi011b:amd64 --amend stephanus42/lemi011b:armv7 --amend stephanus42/lemi011b:arm64
+      run: docker manifest create stephanus42/lemi011b:latest --amend stephanus42/lemi011b:amd64 --amend stephanus42/lemi011b:arm --amend stephanus42/lemi011b:arm64
     - name: Push Docker manifest
       run: docker manifest push stephanus42/lemi011b:latest
