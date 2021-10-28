@@ -37,6 +37,7 @@ ENV LEMI011B_SERVER_REST_PORT=8080
 EXPOSE 8080
 
 COPY --from=builder etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY /web .
 COPY --from=builder /go/bin/server /go/bin/import
 
 ENTRYPOINT ["/go/bin/import"]
