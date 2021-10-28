@@ -19,10 +19,6 @@ func main() {
 	if timescaledbURL == "" {
 		log.Fatal("no env variable defined for timescaledb url")
 	}
-	restPort := os.Getenv("LEMI011B_SERVER_REST_PORT")
-	if restPort == "" {
-		log.Fatal("no env variable defined for rest port")
-	}
 
 	dbpool, err := pgxpool.Connect(ctx, timescaledbURL)
 	if err != nil {
@@ -49,5 +45,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Fatal(http.ListenAndServe(":"+restPort, server))
+	// TODO: If there aren't any certs
+	//  -> Generate some self-signed ones?
+	//  -> Just use HTTP instead?
+	//  -> Panic?
+	log.Fatal(http.ListenAndServeTLS(":443", "/certs/fullchain.pem", "/certs/privkey.pem", server))
 }

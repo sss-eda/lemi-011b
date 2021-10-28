@@ -32,9 +32,9 @@ ENTRYPOINT ["/go/bin/import"]
 FROM scratch AS server
 
 ENV LEMI011B_SERVER_TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
-ENV LEMI011B_SERVER_REST_PORT=8080
 
-EXPOSE 8080
+EXPOSE 443
+VOLUME "certs"
 
 COPY --from=builder etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY /web .

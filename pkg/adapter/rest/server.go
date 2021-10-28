@@ -28,7 +28,8 @@ func NewServer(
 		registry: registrationService,
 	}
 
-	server.mux.Handle("/", http.FileServer(http.Dir("/web")))
+	// server.mux.HandleFunc("/", http.HandlerFunc(http.FileServer(http.Dir(".\\web")).ServeHTTP))
+	server.mux.Handle("/", http.FileServer(http.Dir("./web")))
 	server.mux.HandleFunc("/datum", server.AcquireDatum)
 	server.mux.HandleFunc("/sensor", server.RegisterSensor)
 
