@@ -81,7 +81,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./build/Dockerfile
+          file: ./build/docker/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm32v7
           push: true
           tags: ${{ steps.prepClient.outputs.tags }}
@@ -92,7 +92,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
-          file: ./build/Dockerfile
+          file: ./build/docker/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm32v7
           push: true
           tags: ${{ steps.prepServer.outputs.tags }}
