@@ -32,6 +32,10 @@ COPY --from=builder /app /app
 # Import the root ca-certificates (required for Let's Encrypt)
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
+ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
+ENV PRODUCTION=False
+ENV REDIRECT_TO_HTTPS=False
+
 # Expose both 443 and 80 to our application
 EXPOSE 443
 EXPOSE 80

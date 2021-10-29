@@ -1,18 +1,12 @@
 package main
 
 import (
-	"flag"
 	"net/http"
 	"time"
 )
 
 const (
 	httpPort = "127.0.0.1:8080"
-)
-
-var (
-	flgProduction          = false
-	flgRedirectHTTPToHTTPS = false
 )
 
 func makeServerFromMux(mux *http.ServeMux) *http.Server {
@@ -36,8 +30,8 @@ func makeHTTPToHTTPSRedirectServer() *http.Server {
 	return makeServerFromMux(mux)
 }
 
-func parseFlags() {
-	flag.BoolVar(&flgProduction, "production", true, "if true, we start HTTPS server")
-	flag.BoolVar(&flgRedirectHTTPToHTTPS, "redirect-to-https", true, "if true, we redirect HTTP to HTTPS")
-	flag.Parse()
-}
+// func parseFlags() {
+// 	flag.BoolVar(&flgProduction, "production", false, "if true, we start HTTPS server")
+// 	flag.BoolVar(&flgRedirectHTTPToHTTPS, "redirect-to-https", false, "if true, we redirect HTTP to HTTPS")
+// 	flag.Parse()
+// }
