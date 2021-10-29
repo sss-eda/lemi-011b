@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"golang.org/x/crypto/acme/autocert"
 
@@ -19,7 +20,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	timescaledbURL := os.Getenv("LEMI011B_SERVER_TIMESCALEDB_URL")
+	timescaledbURL := os.Getenv("TIMESCALEDB_URL")
 	if timescaledbURL == "" {
 		log.Fatal("no env variable defined for timescaledb url")
 	}
@@ -49,10 +50,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	parseFlags()
 	var m *autocert.Manager
 
 	var httpsSrv *http.Server
+
+	flgProduction, err := strconv.ParseBool(os.Getenv("PRODUCTION"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	if flgProduction {
 		hostPolicy := func(ctx context.Context, host string) error {
 			// Note: change to your real host
@@ -84,6 +89,11 @@ func main() {
 	}
 
 	var httpSrv *http.Server
+
+	flgRedirectHTTPToHTTPS, err := strconv.ParseBool(os.Getenv("REDIRECT_TO_HTTPS"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	if flgRedirectHTTPToHTTPS {
 		httpSrv = makeHTTPToHTTPSRedirectServer()
 	} else {
