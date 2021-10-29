@@ -21,7 +21,7 @@ type Server struct {
 func NewServer(
 	acquisitionService acquisition.Service,
 	registrationService registration.Service,
-) (*Server, error) {
+) (*http.ServeMux, error) {
 	server := &Server{
 		mux:      http.NewServeMux(),
 		acquirer: acquisitionService,
@@ -29,11 +29,11 @@ func NewServer(
 	}
 
 	// server.mux.HandleFunc("/", http.HandlerFunc(http.FileServer(http.Dir(".\\web")).ServeHTTP))
-	server.mux.Handle("/", http.FileServer(http.Dir("./web")))
+	server.mux.Handle("/", http.FileServer(http.Dir("./../../web")))
 	server.mux.HandleFunc("/datum", server.AcquireDatum)
 	server.mux.HandleFunc("/sensor", server.RegisterSensor)
 
-	return server, nil
+	return server.mux, nil
 }
 
 // ServeHTTP TODO
