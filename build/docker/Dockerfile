@@ -1,6 +1,8 @@
 # Accept the Go version for the image to be set as a build argument.
 # Default to Go 1.17
 ARG GO_VERSION=1.17
+ARG PRODUCTION=True
+ARG REDIRECT_TO_HTTPS=True
 
 # First stage: build the executable.
 FROM golang:${GO_VERSION} AS builder
@@ -31,6 +33,8 @@ FROM scratch AS final
 COPY --from=builder /app /app
 # Import the root ca-certificates (required for Let's Encrypt)
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+ENV LEMI011B_SERVER_TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
 
 # Expose both 443 and 80 to our application
 EXPOSE 443

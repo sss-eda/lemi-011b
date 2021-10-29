@@ -37,7 +37,7 @@ func makeHTTPToHTTPSRedirectServer() *http.Server {
 }
 
 func parseFlags() {
-	flag.BoolVar(&flgProduction, "production", true, "if true, we start HTTPS server")
-	flag.BoolVar(&flgRedirectHTTPToHTTPS, "redirect-to-https", true, "if true, we redirect HTTP to HTTPS")
+	flag.BoolVar(&flgProduction, "production", false, "if true, we start HTTPS server")
+	flag.BoolVar(&flgRedirectHTTPToHTTPS, "redirect-to-https", false, "if true, we redirect HTTP to HTTPS")
 	flag.Parse()
 }
