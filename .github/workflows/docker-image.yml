@@ -35,10 +35,10 @@ jobs:
 #           echo ::set-output name=tags::${TAGS}
 #           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           
-      - name: Prepare Server
-        id: prepServer
+      - name: Prepare
+        id: prep
         run: |
-          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${GITHUB_REPOSITORY#*/}-server
+          DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${GITHUB_REPOSITORY#*/}
           VERSION=latest
           SHORTREF=${GITHUB_SHA::8}
 
@@ -87,7 +87,7 @@ jobs:
 #           tags: ${{ steps.prepClient.outputs.tags }}
 #           target: client
 
-      - name: Build Server
+      - name: Build
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -96,7 +96,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ steps.prepServer.outputs.tags }}
-          target: server
+          target: final
 
 # jobs:
 
