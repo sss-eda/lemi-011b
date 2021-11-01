@@ -1,4 +1,4 @@
 package acquisition
 
 // SensorID TODO
-type SensorID uint64
+type SensorID interface{}

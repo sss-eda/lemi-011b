@@ -3,8 +3,7 @@ package timescaledb
 import (
 	"context"
 
-	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
-	"github.com/sss-eda/lemi-011b/pkg/domain/registration"
+	"github.com/sss-eda/lemi-011b/pkg/registration"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -47,22 +46,6 @@ func NewRepository(
 	}
 
 	return repo, nil
-}
-
-// AcquireDatum TODO
-func (repo *Repository) AcquireDatum(
-	ctx context.Context,
-	datum acquisition.Datum,
-) error {
-	_, err := repo.pool.Exec(ctx, `
-		INSERT INTO datum (time, sensor_id, x, y, z, t)
-		VALUES ($1, $2, $3, $4, $5, $6);
-	`, datum.Time, datum.SensorID, datum.X, datum.Y, datum.Z, datum.T)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // RegisterSensor TODO

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sss-eda/lemi-011b/pkg/domain/acquisition"
+	"github.com/sss-eda/lemi-011b/pkg/acquisition"
 	tarm "github.com/tarm/serial"
 )
 
