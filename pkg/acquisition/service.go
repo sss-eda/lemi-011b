@@ -20,5 +20,5 @@ func (svc *service) AcquireDatum(
 	ctx context.Context,
 	datum Datum,
 ) error {
-	return nil
+	return svc.repo.AcquireDatum(ctx, datum)
 }

@@ -1,4 +1,9 @@
 package acquisition
 
 // SensorID TODO
-type SensorID interface{}
+type SensorID struct{}
+
+// Sensor TODO
+type Sensor struct {
+	ID SensorID
+}
