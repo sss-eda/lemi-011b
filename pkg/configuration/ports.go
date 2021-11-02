@@ -4,7 +4,9 @@ import "context"
 
 // Service TODO
 type Service interface {
-	Configure(context.Context, interface{}) error
+	ParseENV(context.Context, interface{}) error
+	// ParseJSON(context.Context, interface{}) error
+	// ParseYAML(context.Context, interface{}) error
 }
 
 // Repository TODO

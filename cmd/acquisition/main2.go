@@ -1,38 +1,42 @@
 package main
 
-func main() {
-	config := &Config{}
-	err := config.Parse(env.NewParser())
-}
+// https://blog.kowalczyk.info/article/Jl3G/https-for-free-in-go.html
+// To run:
+// go run main.go
+// Command-line options:
+//   -production : enables HTTPS on port 443
+//   -redirect-to-https : redirect HTTP to HTTTPS
 
-// const (
-// 	httpPort = "127.0.0.1:8080"
-// )
+// func makeHTTPToHTTPSRedirectServer() *http.Server {
+// 	handleRedirect := func(w http.ResponseWriter, r *http.Request) {
+// 		newURI := "https://" + r.Host + r.URL.String()
+// 		http.Redirect(w, r, newURI, http.StatusFound)
+// 	}
+// 	mux := &http.ServeMux{}
+// 	mux.HandleFunc("/", handleRedirect)
+// 	return &http.Server{
+// 		ReadTimeout:  5 * time.Second,
+// 		WriteTimeout: 5 * time.Second,
+// 		IdleTimeout:  120 * time.Second,
+// 		Handler:      mux,
+// 	}
+// }
+
+// func parseFlags() {
+// 	flag.BoolVar(&flgProduction, "production", false, "if true, we start HTTPS server")
+// 	flag.BoolVar(&flgRedirectHTTPToHTTPS, "redirect-to-https", false, "if true, we redirect HTTP to HTTPS")
+// 	flag.Parse()
+// }
 
 // func main() {
 // 	ctx := context.Background()
 
-// 	timescaledbURL := os.Getenv("TIMESCALEDB_URL")
-// 	if timescaledbURL == "" {
-// 		log.Fatal("no env variable defined for timescaledb url")
-// 	}
-
-// 	dbpool, err := pgxpool.Connect(ctx, timescaledbURL)
+// 	configurator, err := configuration.NewService(ctx)
 // 	if err != nil {
 // 		log.Fatal(err)
 // 	}
-
-// 	repo, err := timescaledb.NewRepository(ctx, dbpool)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	acquirer, err := acquisition.NewService(repo)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	server, err := rest.NewServer(acquirer)
+// 	config := &Config{}
+// 	err = configurator.ParseENV(ctx, config)
 // 	if err != nil {
 // 		log.Fatal(err)
 // 	}
@@ -40,22 +44,15 @@ func main() {
 // 	var m *autocert.Manager
 
 // 	var httpsSrv *http.Server
-
-// 	flgProduction, err := strconv.ParseBool(os.Getenv("PRODUCTION"))
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	if flgProduction {
-// 		hostPolicy := func(ctx context.Context, host string) error {
+// 	if config.Environment == Production {
+// 		hostPolicy := autocert.HostWhitelist(config.TLS.Hosts)
+// 		func(ctx context.Context, host string) error {
 // 			// Note: change to your real host
-// 			allowedHost := "sansa.dev"
+// 			allowedHost := "www.mydomain.com"
 // 			if host == allowedHost {
 // 				return nil
 // 			}
-// 			return fmt.Errorf(
-// 				"acme/autocert: only %s host is allowed",
-// 				allowedHost,
-// 			)
+// 			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
 // 		}
 
 // 		dataDir := "."
@@ -69,7 +66,7 @@ func main() {
 // 			ReadTimeout:  5 * time.Second,
 // 			WriteTimeout: 5 * time.Second,
 // 			IdleTimeout:  120 * time.Second,
-// 			Handler:      server,
+// 			Handler:      &http.ServeMux{},
 // 		}
 // 		httpsSrv.Addr = ":443"
 // 		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
@@ -84,28 +81,14 @@ func main() {
 // 	}
 
 // 	var httpSrv *http.Server
-
-// 	flgRedirectHTTPToHTTPS, err := strconv.ParseBool(os.Getenv("REDIRECT_TO_HTTPS"))
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
 // 	if flgRedirectHTTPToHTTPS {
-// 		httpSrv = mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-// 			newURI := "https://" + r.Host + r.URL.String()
-// 			http.Redirect(w, r, newURI, http.StatusFound)
-// 		})
-// 		return &http.Server{
-// 			ReadTimeout:  5 * time.Second,
-// 			WriteTimeout: 5 * time.Second,
-// 			IdleTimeout:  120 * time.Second,
-// 			Handler:      &http.ServeMux{},
-// 		}
+// 		httpSrv = makeHTTPToHTTPSRedirectServer()
 // 	} else {
 // 		httpSrv = &http.Server{
 // 			ReadTimeout:  5 * time.Second,
 // 			WriteTimeout: 5 * time.Second,
 // 			IdleTimeout:  120 * time.Second,
-// 			Handler:      server,
+// 			Handler:      &http.ServeMux{},
 // 		}
 // 	}
 // 	// allow autocert handle Let's Encrypt callbacks over http
@@ -115,7 +98,7 @@ func main() {
 
 // 	httpSrv.Addr = httpPort
 // 	fmt.Printf("Starting HTTP server on %s\n", httpPort)
-// 	err = httpSrv.ListenAndServe()
+// 	err := httpSrv.ListenAndServe()
 // 	if err != nil {
 // 		log.Fatalf("httpSrv.ListenAndServe() failed with %s", err)
 // 	}

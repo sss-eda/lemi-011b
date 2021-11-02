@@ -11,14 +11,14 @@ import (
 	"github.com/sss-eda/lemi-011b/pkg/configuration"
 )
 
-type repository struct{}
+type service struct{}
 
 // NewRepository TODO
-func NewRepository() (configuration.Repository, error) {
-	return &repository{}, nil
+func NewService() (configuration.Repository, error) {
+	return &service{}, nil
 }
 
-func (repo *repository) Configure(
+func (svc *service) Configure(
 	ctx context.Context,
 	config interface{},
 ) error {
