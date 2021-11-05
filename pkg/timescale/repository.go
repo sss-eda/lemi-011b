@@ -1,4 +1,4 @@
-package timescaledb
+package timescale
 
 import (
 	"context"
@@ -11,25 +11,15 @@ import (
 
 // Repository TODO
 type Repository struct {
-	ctx    context.Context
-	config Config
-	pool   *pgxpool.Pool
+	pool *pgxpool.Pool
 }
 
 // NewRepository TODO
 func NewRepository(
-	ctx context.Context,
-	config Config,
-	pgxpool *pgxpool.Pool,
+	pgxPool *pgxpool.Pool,
 ) (*Repository, error) {
-	repo := &Repository{
-		ctx:    ctx,
-		config: config,
-		pool:   pgxpool,
-	}
-
-	_, err := repo.pool.Exec(ctx, `
-		CREATE TABLE IF NOT EXISTS sensor
+	_, err := pgxPool.Exec(context.Background(), `
+		CREATE TABLE IF NOT EXISTS instrument
 		(
 			id SERIAL PRIMARY KEY
 		);
@@ -37,12 +27,12 @@ func NewRepository(
 		CREATE TABLE IF NOT EXISTS datum
 		(
 			time TIMESTAMPTZ PRIMARY KEY,
-			sensor_id INTEGER,
+			instrument_id INTEGER,
 			x INTEGER,
 			y INTEGER,
 			z INTEGER,
 			t INTEGER,
-			FOREIGN KEY (sensor_id) REFERENCES sensor (id)
+			FOREIGN KEY (instrument_id) REFERENCES instrument (id)
 		);
 
 		SELECT create_hypertable('datum', 'time', if_not_exists => TRUE);
@@ -51,7 +41,9 @@ func NewRepository(
 		return nil, err
 	}
 
-	return repo, nil
+	return &Repository{
+		pool: pgxPool,
+	}, nil
 }
 
 // AcquireDatum TODO
@@ -60,9 +52,9 @@ func (repo *Repository) AcquireDatum(
 	datum acquisition.Datum,
 ) error {
 	_, err := repo.pool.Exec(ctx, `
-		INSERT INTO datum (time, sensor_id, x, y, z, t)
+		INSERT INTO datum (time, instrument_id, x, y, z, t)
 		VALUES ($1, $2, $3, $4, $5, $6);
-	`, datum.Time, datum.SensorID, datum.X, datum.Y, datum.Z, datum.T)
+	`, datum.Time, datum.InstrumentID, datum.X, datum.Y, datum.Z, datum.T)
 	if err != nil {
 		return err
 	}
@@ -70,15 +62,15 @@ func (repo *Repository) AcquireDatum(
 	return nil
 }
 
-// RegisterSensor TODO
-func (repo *Repository) RegisterSensor(
+// RegisterInstrument TODO
+func (repo *Repository) RegisterInstrument(
 	ctx context.Context,
-	sensor registration.Sensor,
+	instrument registration.Instrument,
 ) error {
 	_, err := repo.pool.Exec(ctx, `
-		INSERT INTO sensor (id)
+		INSERT INTO instrument (id)
 		VALUES ($1);
-	`, sensor.ID)
+	`, instrument.ID)
 	if err != nil {
 		return err
 	}

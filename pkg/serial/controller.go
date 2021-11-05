@@ -14,18 +14,18 @@ import (
 
 // Controller TODO
 type Controller struct {
-	sensorID acquisition.SensorID
-	service  acquisition.Service
+	instrumentID acquisition.InstrumentID
+	service      acquisition.Service
 }
 
 // NewController TODO
 func NewController(
-	sensorID acquisition.SensorID,
+	instrumentID acquisition.InstrumentID,
 	acquisitionService acquisition.Service,
 ) (*Controller, error) {
 	return &Controller{
-		sensorID: sensorID,
-		service:  acquisitionService,
+		instrumentID: instrumentID,
+		service:      acquisitionService,
 	}, nil
 }
 
@@ -66,12 +66,12 @@ func (ctrl *Controller) Run(
 		}
 
 		datum := acquisition.Datum{
-			Time:     timestamp,
-			SensorID: ctrl.sensorID,
-			X:        int32(x),
-			Y:        int32(y),
-			Z:        int32(z),
-			T:        int16(t),
+			Time:         timestamp,
+			InstrumentID: ctrl.instrumentID,
+			X:            int32(x),
+			Y:            int32(y),
+			Z:            int32(z),
+			T:            int16(t),
 		}
 
 		err = ctrl.service.AcquireDatum(ctx, datum)

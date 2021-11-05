@@ -18,10 +18,10 @@ func NewService(
 	}, nil
 }
 
-// RegisterSensor TODO
-func (svc *service) RegisterSensor(
+// RegisterInstrument TODO
+func (svc *service) RegisterInstrument(
 	ctx context.Context,
-	sensor Sensor,
+	instrument Instrument,
 ) error {
-	return svc.repo.RegisterSensor(ctx, sensor)
+	return svc.repo.RegisterInstrument(ctx, instrument)
 }

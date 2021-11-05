@@ -55,18 +55,18 @@ func (client *Client) AcquireDatum(
 	return nil
 }
 
-// RegisterSensor TODO
-func (client *Client) RegisterSensor(
+// RegisterInstrument TODO
+func (client *Client) RegisterInstrument(
 	ctx context.Context,
-	sensor registration.Sensor,
+	instrument registration.Instrument,
 ) error {
-	jsonData, err := json.Marshal(sensor)
+	jsonData, err := json.Marshal(instrument)
 	if err != nil {
 		log.Println(err)
 	}
 
 	resp, err := client.api.Post(
-		client.url+"/sensor",
+		client.url+"/instrument",
 		"application/json",
 		bytes.NewBuffer(jsonData),
 	)

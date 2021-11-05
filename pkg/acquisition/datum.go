@@ -6,10 +6,10 @@ import (
 
 // Datum TODO
 type Datum struct {
-	Time     time.Time `json:"time"`
-	SensorID SensorID  `json:"sensor_id"`
-	X        int32     `json:"x"`
-	Y        int32     `json:"y"`
-	Z        int32     `json:"z"`
-	T        int16     `json:"t"`
+	Time         time.Time    `json:"time"`
+	InstrumentID InstrumentID `json:"sensor_id"`
+	X            int32        `json:"x"`
+	Y            int32        `json:"y"`
+	Z            int32        `json:"z"`
+	T            int16        `json:"t"`
 }

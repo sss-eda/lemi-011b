@@ -2,23 +2,24 @@ package acquisition
 
 import "context"
 
-type service struct {
+// Service TODO
+type Service struct {
 	repo Repository
 }
 
 // NewService TODO
 func NewService(
 	repository Repository,
-) (Service, error) {
-	return &service{
+) (*Service, error) {
+	return &Service{
 		repo: repository,
 	}, nil
 }
 
 // AcquireDatum TODO
-func (svc *service) AcquireDatum(
+func (service *Service) AcquireDatum(
 	ctx context.Context,
 	datum Datum,
 ) error {
-	return svc.repo.AcquireDatum(ctx, datum)
+	return service.repo.AcquireDatum(ctx, datum)
 }

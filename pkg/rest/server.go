@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -15,9 +16,9 @@ type API struct {
 	acquirer acquisition.Service
 }
 
-// AcquireDatum TODO
+// AcquireDatumHandler TODO
 func AcquireDatumHandler(
-	acquirer acquisition.Service,
+	callback func(context.Context, acquisition.Datum) error,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -36,7 +37,7 @@ func AcquireDatumHandler(
 			return
 		}
 
-		err = acquirer.AcquireDatum(r.Context(), datum)
+		err = callback(r.Context(), datum)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -47,9 +48,9 @@ func AcquireDatumHandler(
 	}
 }
 
-// RegisterSensorHandler TODO
-func RegisterSensorHandler(
-	registry registration.Service,
+// RegisterInstrumentHandler TODO
+func RegisterInstrumentHandler(
+	callback func(context.Context, registration.Instrument) error,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -58,17 +59,17 @@ func RegisterSensorHandler(
 			return
 		}
 
-		sensor := registration.Sensor{}
+		instrument := registration.Instrument{}
 
 		dec := json.NewDecoder(r.Body)
-		err := dec.Decode(&sensor)
+		err := dec.Decode(&instrument)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		err = registry.RegisterSensor(r.Context(), sensor)
+		err = callback(r.Context(), instrument)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
