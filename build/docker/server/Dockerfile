@@ -1,5 +1,5 @@
 # First stage: build the executable.
-FROM golang:latest AS builder
+FROM golang:alpine AS builder
 
 # Set the working directory outside $GOPATH to enable the support for modules.
 WORKDIR /src
@@ -36,7 +36,7 @@ ENTRYPOINT ["/app --port 8080"]
 FROM scratch AS production
 
 # Import the compiled executable from the first stage.
-COPY --from=builder /app /app
+COPY --from=builder /app /
 COPY --from=builder /src/web /web
 # Import the root ca-certificates (required for Let's Encrypt)
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
