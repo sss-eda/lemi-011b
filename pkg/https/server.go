@@ -28,5 +28,7 @@ func Serve(
 	}
 
 	fmt.Printf("Starting HTTPS server on %s\n", server.Addr)
-	return server.ListenAndServeTLS("", "")
+	go server.ListenAndServeTLS("", "")
+
+	return http.ListenAndServe(":80", certManager.HTTPHandler(nil))
 }
