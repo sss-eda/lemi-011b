@@ -37,8 +37,8 @@ func main() {
 	tlsEnabled := flag.Bool("tls", false, "Enable TLS.")
 	tlsCertDir := flag.String("tls_dir", "", "TLS certificate cache directory.")
 
-	tlsHosts := tlsHostsVar{}
-	flag.Var(&tlsHosts, "tls_host", "TLS allowed host name.")
+	tlsHosts := &tlsHostsVar{}
+	flag.Var(tlsHosts, "tls_host", "TLS allowed host name.")
 
 	flag.Parse()
 
@@ -70,13 +70,17 @@ func main() {
 	}
 
 	if *tlsEnabled {
-		log.Fatal(https.Serve(https.Config{
-			Hosts:   tlsHosts,
+		httpsConfig := https.Config{
+			Hosts:   *tlsHosts,
 			CertDir: *tlsCertDir,
-		}, handler))
+		}
+		log.Println(httpsConfig)
+		log.Fatal(https.Serve(httpsConfig, handler))
 	} else {
-		log.Fatal(http.Serve(http.Config{
+		httpConfig := http.Config{
 			Port: *httpPort,
-		}, handler))
+		}
+		log.Println(httpConfig)
+		log.Fatal(http.Serve(httpConfig, handler))
 	}
 }
