@@ -11,13 +11,20 @@ import (
 	"github.com/sss-eda/lemi-011b/pkg/registration"
 )
 
-// API TODO
-type API struct {
-	acquirer acquisition.Service
+// NewHandler TODO
+func NewHandler(
+	acquirer acquisition.Service,
+	registrar registration.Service,
+) (http.Handler, error) {
+	mux := http.DefaultServeMux
+
+	mux.HandleFunc("/datum", acquireDatum(acquirer.AcquireDatum))
+	mux.HandleFunc("/instrument", registerInstrument(registrar.RegisterInstrument))
+
+	return mux, nil
 }
 
-// AcquireDatumHandler TODO
-func AcquireDatumHandler(
+func acquireDatum(
 	callback func(context.Context, acquisition.Datum) error,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -48,8 +55,7 @@ func AcquireDatumHandler(
 	}
 }
 
-// RegisterInstrumentHandler TODO
-func RegisterInstrumentHandler(
+func registerInstrument(
 	callback func(context.Context, registration.Instrument) error,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -1,3 +1,5 @@
+ARG production=true
+
 # First stage: build the executable.
 FROM golang:latest AS builder
 
@@ -16,8 +18,23 @@ COPY ./ ./
 RUN CGO_ENABLED=0 go build -installsuffix 'static' -o /app ./cmd/server/...
 
 
-# Final stage: the running container.
-FROM scratch AS final
+# Development stage: the running container.
+FROM scratch AS development
+
+# Import the compiled executable from the first stage.
+COPY --from=builder /app /app
+
+ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
+
+# Expose port 8080 to our application
+EXPOSE 8080
+
+# Run the compiled binary.
+ENTRYPOINT ["/app --port 8080"]
+
+
+# Production stage: the running container.
+FROM scratch AS production
 
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
@@ -25,8 +42,6 @@ COPY --from=builder /app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
-ENV PRODUCTION=False
-ENV REDIRECT_TO_HTTPS=False
 
 # Expose both 443 and 80 to our application
 EXPOSE 443
@@ -37,4 +52,4 @@ EXPOSE 80
 VOLUME ["/cert-cache"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/app --tls --tls_cert_dir=TLS_CERT_DIR --tls_host=sansa.dev --tls_host=www.sansa.dev"]

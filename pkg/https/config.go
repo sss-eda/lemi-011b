@@ -1,32 +1,36 @@
 package https
 
-import (
-	"flag"
-	"strings"
-)
-
 // Config TODO
 type Config struct {
-	Hosts hostsVar
+	Hosts   []string
+	CertDir string
 }
 
-func configure() Config {
-	config := Config{}
-	flag.StringVar(&config.Hosts, "addr", "")
-}
+// Config TODO
+// type Config struct {
+// 	Hosts hostsVar
+// 	Certs string
+// }
 
-type hostsVar []string
+// func configure() Config {
+// 	config := Config{}
+// 	flag.StringVar(&config.Hosts, "addr", "")
+// 	flag.StringVar(&config.Hosts, "a", "")
+// 	flag.StringVar(&config.Certs, "certs", "")
+// }
 
-// String TODO
-func (hosts *hostsVar) String() string {
-	if len(hosts) > 0 && hosts != nil {
-		return strings.Join(hosts, ", ")
-	}
+// type hostsVar []string
 
-	return ""
-}
+// // String TODO
+// func (hosts *hostsVar) String() string {
+// 	if len(*hosts) > 0 && hosts != nil {
+// 		return strings.Join(*hosts, ", ")
+// 	}
 
-// Set TODO
-func (hosts *hostsVar) Set(s string) error {
+// 	return ""
+// }
 
-}
+// // Set TODO
+// func (hosts *hostsVar) Set(s string) error {
+// 	return nil
+// }

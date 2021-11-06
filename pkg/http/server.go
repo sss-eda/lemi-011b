@@ -1,11 +1,21 @@
 package http
 
-// Server TODO
-type Server struct{}
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+)
 
-// NewServer TODO
-func NewServer(
+// Serve TODO
+func Serve(
 	config Config,
-) (*Server, error) {
-	return &Server{}, nil
+	handler http.Handler,
+) error {
+	server := &http.Server{
+		Addr:    ":" + strconv.FormatUint(uint64(config.Port), 10),
+		Handler: handler,
+	}
+
+	fmt.Printf("Starting HTTP server on port:%v\n", config.Port)
+	return server.ListenAndServe()
 }
