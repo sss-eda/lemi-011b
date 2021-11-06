@@ -52,4 +52,4 @@ EXPOSE 80
 # VOLUME ["/cert-cache"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app --tls --tls_cert_dir=/cert-cache --tls_host=api.sansa.dev"]
+ENTRYPOINT ["/app --tls --tls_dir=/certs --tls_host=api.sansa.dev"]
