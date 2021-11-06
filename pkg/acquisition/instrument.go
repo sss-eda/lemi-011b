@@ -1,7 +1,7 @@
 package acquisition
 
 // InstrumentID TODO
-type InstrumentID struct{}
+type InstrumentID interface{}
 
 // Instrument TODO
 type Instrument struct {

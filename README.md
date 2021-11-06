@@ -1,4 +1,6 @@
 # LEMI-011B
+[![Docker Build CI - Client](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml)
+[![Docker Build CI - Server](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml)
 This repository contains acquisition software for the LEMI-011B magnetometer.
 
 The software consists of a server and client side. The idea is that the client service runs on the logging cluster. It reads data from the serial port and forwards it to the server API. The server, in turn, runs remotely and listens on the API for new data. The data is then persisted by the server side software.
