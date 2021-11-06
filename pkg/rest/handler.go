@@ -18,7 +18,7 @@ func NewHandler(
 ) (http.Handler, error) {
 	mux := http.DefaultServeMux
 
-	fs := http.FileServer(http.Dir("./web"))
+	fs := http.FileServer(http.Dir("/web"))
 
 	mux.Handle("/", fs)
 	mux.HandleFunc("/datum", acquireDatum(acquirer.AcquireDatum))

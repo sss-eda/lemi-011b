@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 go build -installsuffix 'static' -o /app ./cmd/server/...
 FROM scratch AS development
 
 # Import the compiled executable from the first stage.
-COPY --from=builder /app /app
+COPY --from=builder /app /
 COPY --from=builder /src/web /web
 
 ENV TIMESCALE_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
@@ -29,7 +29,7 @@ ENV TIMESCALE_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
 EXPOSE 8080
 
 # Run the compiled binary.
-ENTRYPOINT ["/app --port 8080"]
+ENTRYPOINT ["/app", "--port=8080"]
 
 
 # Production stage: the running container.
@@ -52,4 +52,4 @@ EXPOSE 80
 # VOLUME ["/cert-cache"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app --tls --tls_dir=/certs --tls_host=api.sansa.dev"]
+ENTRYPOINT ["/app", "--tls", "--tls_dir=/certs", "--tls_host=api.sansa.dev"]
