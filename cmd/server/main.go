@@ -2,121 +2,81 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
-	"fmt"
+	"flag"
 	"log"
-	"net/http"
 	"os"
-	"strconv"
-
-	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/sss-eda/lemi-011b/pkg/adapter/rest"
-	"github.com/sss-eda/lemi-011b/pkg/adapter/timescaledb"
-	"github.com/sss-eda/lemi-011b/pkg/core"
+	"github.com/sss-eda/lemi-011b/pkg/acquisition"
+	"github.com/sss-eda/lemi-011b/pkg/http"
+	"github.com/sss-eda/lemi-011b/pkg/https"
+	"github.com/sss-eda/lemi-011b/pkg/registration"
+	"github.com/sss-eda/lemi-011b/pkg/rest"
+	"github.com/sss-eda/lemi-011b/pkg/timescale"
 )
 
-func main() {
-	ctx := context.Background()
+// flag value
+type tlsHostsVar []string
 
-	timescaledbURL := os.Getenv("TIMESCALEDB_URL")
-	if timescaledbURL == "" {
-		log.Fatal("no env variable defined for timescaledb url")
-	}
-
-	dbpool, err := pgxpool.Connect(ctx, timescaledbURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	repo, err := timescaledb.NewRepository(ctx, dbpool)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	acquirer, err := core.NewAcquisitionService(repo)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	registry, err := core.NewRegistrationService(repo)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	server, err := rest.NewServer(acquirer, registry)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var m *autocert.Manager
-
-	var httpsSrv *http.Server
-
-	flgProduction, err := strconv.ParseBool(os.Getenv("PRODUCTION"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	if flgProduction {
-		hostPolicy := func(ctx context.Context, host string) error {
-			// Note: change to your real host
-			allowedHost := "sansa.dev"
-			if host == allowedHost {
-				return nil
-			}
-			return fmt.Errorf("acme/autocert: only %s host is allowed", allowedHost)
-		}
-
-		dataDir := "."
-		m = &autocert.Manager{
-			Prompt:     autocert.AcceptTOS,
-			HostPolicy: hostPolicy,
-			Cache:      autocert.DirCache(dataDir),
-		}
-
-		httpsSrv = makeServerFromMux(server)
-		httpsSrv.Addr = ":443"
-		httpsSrv.TLSConfig = &tls.Config{GetCertificate: m.GetCertificate}
-
-		go func() {
-			fmt.Printf("Starting HTTPS server on %s\n", httpsSrv.Addr)
-			err := httpsSrv.ListenAndServeTLS("", "")
-			if err != nil {
-				log.Fatalf("httpsSrv.ListendAndServeTLS() failed with %s", err)
-			}
-		}()
-	}
-
-	var httpSrv *http.Server
-
-	flgRedirectHTTPToHTTPS, err := strconv.ParseBool(os.Getenv("REDIRECT_TO_HTTPS"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	if flgRedirectHTTPToHTTPS {
-		httpSrv = makeHTTPToHTTPSRedirectServer()
-	} else {
-		httpSrv = makeServerFromMux(server)
-	}
-	// allow autocert handle Let's Encrypt callbacks over http
-	if m != nil {
-		httpSrv.Handler = m.HTTPHandler(httpSrv.Handler)
-	}
-
-	httpSrv.Addr = httpPort
-	fmt.Printf("Starting HTTP server on %s\n", httpPort)
-	err = httpSrv.ListenAndServe()
-	if err != nil {
-		log.Fatalf("httpSrv.ListenAndServe() failed with %s", err)
-	}
+// String TODO
+func (hosts *tlsHostsVar) String() string {
+	return "my string representation"
 }
 
-// func main() {
+// Set TODO
+func (hosts *tlsHostsVar) Set(value string) error {
+	*hosts = append(*hosts, value)
+	return nil
+}
 
-// 	// TODO: If there aren't any certs
-// 	//  -> Generate some self-signed ones?
-// 	//  -> Just use HTTP instead?
-// 	//  -> Panic?
-// 	log.Fatal(http.ListenAndServeTLS(":443", "/certs/fullchain.pem", "/certs/privkey.pem", server))
-// }
+func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	httpPort := flag.Uint64("port", 8080, "Port to serve HTTP on. Exclusive of TLS.")
+	tlsEnabled := flag.Bool("tls", false, "Enable TLS.")
+	tlsCertDir := flag.String("tls_dir", "", "TLS certificate cache directory.")
+
+	tlsHosts := tlsHostsVar{}
+	flag.Var(&tlsHosts, "tls_host", "TLS allowed host name.")
+
+	flag.Parse()
+
+	timescaleURL := os.Getenv("TIMESCALE_URL")
+
+	dbpool, err := pgxpool.Connect(ctx, timescaleURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repo, err := timescale.NewRepository(dbpool)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	acquirer, err := acquisition.NewService(repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	registrar, err := registration.NewService(repo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handler, err := rest.NewHandler(acquirer, registrar)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if *tlsEnabled {
+		log.Fatal(https.Serve(https.Config{
+			Hosts:   tlsHosts,
+			CertDir: *tlsCertDir,
+		}, handler))
+	} else {
+		log.Fatal(http.Serve(http.Config{
+			Port: *httpPort,
+		}, handler))
+	}
+}
