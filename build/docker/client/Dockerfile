@@ -33,7 +33,7 @@ FROM scratch AS production
 
 ENV SERIAL_NAME="/dev/ttyUSB0"
 ENV SERIAL_BAUD=19200
-ENV API_URL="api.sansa.dev"
+ENV API_URL="sansa.dev/api"
 ENV INSTRUMENT_ID=1
 
 # Import the compiled executable from the first stage.

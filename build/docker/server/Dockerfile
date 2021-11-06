@@ -49,7 +49,7 @@ EXPOSE 80
 
 # Mount the certificate cache directory as a volume, so it remains even after
 # we deploy a new version
-# VOLUME ["/cert-cache"]
+VOLUME ["/certs"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app", "--tls", "--tls_dir=/certs", "--tls_host=api.sansa.dev"]
+ENTRYPOINT ["/app", "--tls", "--tls_dir=/certs", "--tls_host=sansa.dev", "--tls_host=www.sansa.dev"]
