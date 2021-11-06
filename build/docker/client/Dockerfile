@@ -1,5 +1,5 @@
 # First stage: build the executable.
-FROM golang:latest AS builder
+FROM golang:alpine AS builder
 
 # Set the working directory outside $GOPATH to enable the support for modules.
 WORKDIR /src
