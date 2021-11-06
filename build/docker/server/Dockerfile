@@ -21,8 +21,9 @@ FROM scratch AS development
 
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
+COPY --from=builder /src/web /web
 
-ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
+ENV TIMESCALE_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
 
 # Expose port 8080 to our application
 EXPOSE 8080
@@ -36,11 +37,11 @@ FROM scratch AS production
 
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
+COPY --from=builder /src/web /web
 # Import the root ca-certificates (required for Let's Encrypt)
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
-ENV TLS_CERT_DIR="/tls-certs"
+ENV TIMESCALE_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
 
 # Expose both 443 and 80 to our application
 EXPOSE 443
@@ -51,4 +52,4 @@ EXPOSE 80
 VOLUME ["/cert-cache"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app --tls --tls_cert_dir=${TLS_CERT_DIR} --tls_host=api.sansa.dev"]
+ENTRYPOINT ["/app --tls --tls_cert_dir=/cert-cache --tls_host=api.sansa.dev"]
