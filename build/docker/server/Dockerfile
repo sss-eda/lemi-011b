@@ -1,5 +1,3 @@
-ARG production=true
-
 # First stage: build the executable.
 FROM golang:latest AS builder
 
@@ -42,6 +40,7 @@ COPY --from=builder /app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 ENV TIMESCALEDB_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
+ENV TLS_CERT_DIR="/tls-certs"
 
 # Expose both 443 and 80 to our application
 EXPOSE 443
@@ -52,4 +51,4 @@ EXPOSE 80
 VOLUME ["/cert-cache"]
 
 # Run the compiled binary.
-ENTRYPOINT ["/app --tls --tls_cert_dir=TLS_CERT_DIR --tls_host=sansa.dev --tls_host=www.sansa.dev"]
+ENTRYPOINT ["/app --tls --tls_cert_dir=${TLS_CERT_DIR} --tls_host=api.sansa.dev"]
