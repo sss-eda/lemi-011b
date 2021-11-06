@@ -21,8 +21,8 @@ func NewHandler(
 	fs := http.FileServer(http.Dir("/web"))
 
 	mux.Handle("/", fs)
-	mux.HandleFunc("/datum", acquireDatum(acquirer.AcquireDatum))
-	mux.HandleFunc("/instrument", registerInstrument(registrar.RegisterInstrument))
+	mux.HandleFunc("/api/datum", acquireDatum(acquirer.AcquireDatum))
+	mux.HandleFunc("/api/instrument", registerInstrument(registrar.RegisterInstrument))
 
 	return mux, nil
 }
