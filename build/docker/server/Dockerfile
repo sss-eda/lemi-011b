@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 go build -installsuffix 'static' -o /app ./cmd/server/...
 FROM scratch AS development
 
 # Import the compiled executable from the first stage.
-COPY --from=builder /app /
+COPY --from=builder /app /app
 COPY --from=builder /src/web /web
 
 ENV TIMESCALE_URL="postgres://postgres:password@10.160.11.142:5432/lemi011b"
@@ -36,7 +36,7 @@ ENTRYPOINT ["/app", "--port=8080"]
 FROM scratch AS production
 
 # Import the compiled executable from the first stage.
-COPY --from=builder /app /
+COPY --from=builder /app /app
 COPY --from=builder /src/web /web
 # Import the root ca-certificates (required for Let's Encrypt)
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
