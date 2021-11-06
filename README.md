@@ -1,3 +1,7 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/sss-eda/lemi-011b)](https://goreportcard.com/report/github.com/sss-eda/lemi-011b)
+[![Docker Build CI - Client](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml)
+[![Docker Build CI - Server](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml)
+
 # LEMI-011B
 This repository contains acquisition software for the LEMI-011B magnetometer.
 
@@ -38,11 +42,3 @@ $ docker run -d -p 8080:8080 -e TIMESCALE_URL="postgres://postgres:password@192.
 # Run the client and mount the serial port into the container.
 $ docker run --privileged -d -e API_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
-
-=======
-[![Go Report Card](https://goreportcard.com/badge/github.com/sss-eda/lemi-011b)](https://goreportcard.com/report/github.com/sss-eda/lemi-011b)
-[![Docker Build CI - Client](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/client.yml)
-[![Docker Build CI - Server](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml/badge.svg?branch=main)](https://github.com/sss-eda/lemi-011b/actions/workflows/server.yml)
-
-# lemi-011b
-Acquisition software for the LEMI-011B magnetometer.
