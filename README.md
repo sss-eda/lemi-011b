@@ -26,17 +26,19 @@ Example instructions for running the Docker containers are show below:
 - To run a **server** container with dependencies:
 ```bash
 # Start a timescaledb instance.
-$ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg12
-# Run the server
-$ docker run -d -p 8080:8080 -e LEMI011B_SERVER_TIMESCALEDB_URL="postgres://postgres:password@192.168.0.1:5432/lemi011b" lemi011b-server
+$ docker run --name timescale -d -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:latest-pg12
+# Log into the database container and create the database
+$ docker exec -it timescale bash
+    $ psql -U postgres
+    $ CREATE DATABASE lemi011b;
+    $ exit
+$ exit
+
+# Run the server (development)
+$ docker run -d -p 8080:8080 -e TIMESCALE_URL="postgres://postgres:password@192.168.0.1:5432/lemi011b" lemi011b-server
 ```
 - To run a **client** container:
 ```bash
 # Run the client and mount the serial port into the container.
-$ docker run --privileged -d -e LEMI011B_CLIENT_REST_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
+$ docker run --privileged -d -e API_URL="http://192.168.0.1:8080" -v /dev/ttyUSB0:/dev/ttyUSB0 lemi011b-client
 ```
-
-## TODO
-- [ ] Implement tests for all packages
-- [ ] Fix problem with new devices
-- [ ] Add device ID functionality
