@@ -39,5 +39,8 @@ ENV INSTRUMENT_ID=1
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
 
+# Import the root ca-certificates (required for Let's Encrypt)
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
 # Run the compiled binary.
-ENTRYPOINT ["/app --serial_name=${SERIAL_NAME} --serial_baud=${SERIAL_BAUD} --api_url=${API_URL} --instrument_id=${INSTRUMENT_ID}}]
+ENTRYPOINT ["/app", "--serial_name=${SERIAL_NAME}", "--serial_baud=${SERIAL_BAUD}", "--api_url=${API_URL}", "--instrument_id=${INSTRUMENT_ID}}]
