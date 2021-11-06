@@ -2,7 +2,6 @@ package https
 
 import (
 	"crypto/tls"
-	"fmt"
 	"net/http"
 
 	"golang.org/x/crypto/acme/autocert"
@@ -13,7 +12,7 @@ func Serve(
 	config Config,
 	handler http.Handler,
 ) error {
-	certManager := &autocert.Manager{
+	certManager := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist(config.Hosts...),
 		Cache:      autocert.DirCache(config.CertDir),
@@ -27,8 +26,8 @@ func Serve(
 		},
 	}
 
-	fmt.Printf("Starting HTTPS server on %s\n", server.Addr)
-	go server.ListenAndServeTLS("", "")
+	// fmt.Printf("Starting HTTPS server on %s\n", server.Addr)
 
-	return http.ListenAndServe(":80", certManager.HTTPHandler(nil))
+	go http.ListenAndServe(":80", certManager.HTTPHandler(nil))
+	return server.ListenAndServeTLS("", "")
 }
