@@ -31,10 +31,12 @@ RUN CGO_ENABLED=0 go build -installsuffix 'static' -o /app ./cmd/client/...
 # Production stage: the running container.
 FROM scratch AS production
 
-ENV SERIAL_NAME="/dev/ttyUSB0"
-ENV SERIAL_BAUD=19200
-ENV API_URL="sansa.dev/api"
-ENV INSTRUMENT_ID=1
+#ENV SERIAL_NAME="/dev/ttyUSB0"
+#ENV SERIAL_BAUD=19200
+#ENV API_URL="sansa.dev/api"
+#ENV INSTRUMENT_ID=1
+
+VOLUME /dev/ttyUSB0
 
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
@@ -43,4 +45,4 @@ COPY --from=builder /app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Run the compiled binary.
-ENTRYPOINT ["/app", --serial_name=$SERIAL_NAME, --serial_baude=$SERIAL_BAUD, --api_url=$API_URL, --instrument_id=$INSTRUMENT_ID]
+ENTRYPOINT ["/app", "--serial_name=/dev/ttyUSB0", "--serial_baude=19200", "--api_url=sansa.dev/api", "--instrument_id=1"]
