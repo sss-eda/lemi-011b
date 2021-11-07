@@ -43,4 +43,4 @@ COPY --from=builder /app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Run the compiled binary.
-ENTRYPOINT ["/app", "--serial_name=${SERIAL_NAME}", "--serial_baude=${SERIAL_BAUD}", "--api_url=${API_URL}", "--instrument_id=${INSTRUMENT_ID}"]
+ENTRYPOINT ["/app", "--serial_name=$SERIAL_NAME", "--serial_baude=$SERIAL_BAUD", "--api_url=$API_URL", "--instrument_id=$INSTRUMENT_ID"]
