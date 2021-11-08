@@ -36,7 +36,7 @@ FROM scratch AS production
 #ENV API_URL="sansa.dev/api"
 #ENV INSTRUMENT_ID=1
 
-VOLUME /dev/ttyUSB0
+# VOLUME /dev/ttyUSB0
 
 # Import the compiled executable from the first stage.
 COPY --from=builder /app /app
