@@ -45,4 +45,4 @@ COPY --from=builder /app /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # Run the compiled binary.
-ENTRYPOINT ["/app", "--serial_name=/dev/ttyUSB0", "--serial_baude=19200", "--api_url=sansa.dev/api", "--instrument_id=1"]
+ENTRYPOINT ["/app", "--serial_name=/dev/ttyUSB0", "--serial_baude=19200", "--api_url=https://sansa.dev/api", "--instrument_id=1"]
